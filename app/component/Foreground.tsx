@@ -1,10 +1,11 @@
 import React from 'react'
+import Card from './Card'
 
 const Foreground = () => {
   return (
     <div className='fixed top-0 left-0 z-3 w-full h-full '>
-
-       <div className='w-60 h-72 rounded-[20px] bg-zinc-700' ></div>
+     <Card />
+  
     </div>
   )
 }

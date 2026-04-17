@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
-* {
- font-family: "Gilroy";
+@theme {
+  --font-sans: "Gilroy", ui-sans-serif, system-ui;
 }
 
 ::selection{
