@@ -1,64 +1,44 @@
 "use client"
-import React, { useRef } from 'react' // Added useRef import
+import React, { useRef, useState } from 'react'
+import { Plus } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
 import Card from './Card'
+import CreateDocModal from './CreateDocModal'
+import { useDocuments } from './DocumentContext'
 
 const Foreground = () => {
-  const ref = useRef<HTMLDivElement>(null); // Added type for ref
-
-  const data = [
-    {
-      description: 'Comprehensive project requirements document with detailed scope, milestones, and deliverables',
-      filesize: '1.2 MB',
-      CloseOrDownload: 'Download',
-      tagdetails: 'Important',
-      tag: {
-        isOpen: true,
-        title: 'Download Now',
-        color: 'green'
-      }
-    },
-    {
-      description: 'Initial user interface wireframe notes covering layout ideas, navigation flow, and component structure',
-      filesize: '860 KB',
-      CloseOrDownload: 'Close',
-      tagdetails: 'Draft',
-      tag: {
-        isOpen: false,
-        title: 'Close',
-        color: 'blue'
-      }
-    },
-    {
-      description: 'Step-by-step API integration checklist including authentication setup, endpoint mapping, and error handling',
-      filesize: '540 KB',
-      CloseOrDownload: 'Download',
-      tagdetails: 'Review',
-      tag: {
-        isOpen: true,
-        color: 'green'
-      }
-    },
-    {
-      description: 'Detailed meeting summary for Sprint 3 with action items, blockers discussed, and team decisions',
-      filesize: '320 KB',
-      CloseOrDownload: 'Close',
-      tagdetails: 'Internal',
-      tag: {
-        isOpen: true,
-        title: 'Meeting Notes',
-        color: 'blue'
-      }
-    },
-  ]
+  const ref = useRef<HTMLDivElement>(null);
+  const { documents } = useDocuments();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <div ref={ref} className='fixed flex-shrink-0 top-0 left-0 z-3 w-full h-full flex gap-10 flex-wrap p-5'>
-      {data.map((item, index) => (
-        <div key={index}>
-          <Card data={item} reference={ref} />
-        </div>
-      ))}
-    </div>
+    <>
+      <div ref={ref} className='fixed flex-shrink-0 top-0 left-0 z-[3] w-full h-full flex gap-10 flex-wrap p-5 pt-24 overflow-y-auto'>
+        <AnimatePresence mode="popLayout">
+          {documents.map((item) => (
+            <Card key={item.id} data={item} reference={ref} />
+          ))}
+        </AnimatePresence>
+
+        {documents.length === 0 && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <p className="text-zinc-500 font-medium">No documents yet. Click + to create one.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Floating Action Button */}
+      <motion.button
+        whileHover={{ scale: 1.1, rotate: 90 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={() => setIsModalOpen(true)}
+        className="fixed bottom-10 right-10 z-[10] flex h-16 w-16 items-center justify-center rounded-full bg-purple-600 text-white shadow-xl shadow-purple-500/30 transition-colors hover:bg-purple-500"
+      >
+        <Plus size={32} />
+      </motion.button>
+
+      <CreateDocModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+    </>
   )
 }
 
