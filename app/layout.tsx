@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider, Show, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs';
+
 import { Providers } from "./component/theme-provider";
 import { DocumentProvider } from "./component/DocumentContext";
 import Sidebar from "./component/Sidebar";
@@ -19,7 +19,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} h-full`}>
       <body className="antialiased h-full overflow-hidden" style={{ background: "var(--color-bg)", color: "var(--color-text)" }}>
-        <ClerkProvider>
           <Providers>
             <DocumentProvider>
 
@@ -37,15 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <span className="font-bold text-sm" style={{ color: "var(--color-text)" }}>Docs</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Show when="signed-out">
-                    <SignInButton />
-                    <SignUpButton>
-                      <button className="btn-brand px-4 py-2 text-sm rounded-xl">Sign Up</button>
-                    </SignUpButton>
-                  </Show>
-                  <Show when="signed-in">
-                    <UserButton />
-                  </Show>
+                  {/* Auth disabled */}
                 </div>
               </header>
 
@@ -70,7 +61,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
             </DocumentProvider>
           </Providers>
-        </ClerkProvider>
       </body>
     </html>
   );
