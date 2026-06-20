@@ -1,9 +1,104 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Gilroy", ui-sans-serif, system-ui;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui;
+  --font-mono: var(--font-geist-mono), ui-monospace;
+
+  /* ── White-tone palette ─────────────────────────────────── */
+  --color-bg:           #F4F4F5;   /* zinc-100  */
+  --color-surface:      #FFFFFF;
+  --color-surface-2:    #F8F8F9;
+  --color-border:       #E4E4E7;   /* zinc-200  */
+  --color-border-hover: #D1D1D6;
+
+  /* Orange accent — warm, clean on white */
+  --color-brand:        #F97316;
+  --color-brand-light:  #FB923C;
+  --color-brand-dark:   #EA580C;
+  --color-brand-glow:   rgba(249,115,22,0.18);
+
+  /* Text */
+  --color-text:         #18181B;   /* zinc-900  */
+  --color-text-muted:   #71717A;   /* zinc-500  */
+  --color-text-dim:     #A1A1AA;   /* zinc-400  */
 }
 
-::selection{
-  color:rgb(255, 179, 0)
+/* ── Base reset ─────────────────────────────────────────── */
+::selection {
+  background: rgba(249,115,22,0.20);
+  color: #18181B;
 }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* ── Scrollbar — single, minimal ───────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+*::-webkit-scrollbar         { width: 4px; height: 4px; }
+*::-webkit-scrollbar-track   { background: transparent; }
+*::-webkit-scrollbar-thumb   {
+  background: var(--color-border);
+  border-radius: 999px;
+  transition: background .2s;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand);
+}
+*::-webkit-scrollbar-corner  { background: transparent; }
+
+/* ── Animations ─────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity:0; transform:translateY(8px); }
+  to   { opacity:1; transform:translateY(0);   }
+}
+@keyframes slide-left {
+  from { opacity:0; transform:translateX(-10px); }
+  to   { opacity:1; transform:translateX(0);      }
+}
+@keyframes glow-pulse {
+  0%,100% { box-shadow:0 0 0 0 var(--color-brand-glow); }
+  50%     { box-shadow:0 0 14px 4px var(--color-brand-glow); }
+}
+@keyframes shimmer {
+  from { background-position:-200% 0; }
+  to   { background-position:200% 0; }
+}
+
+.animate-fade-in  { animation: fade-in   .35s cubic-bezier(.16,1,.3,1) both; }
+.animate-slide-left { animation: slide-left .3s ease both; }
+.animate-glow     { animation: glow-pulse 2.5s infinite; }
+
+/* ── Utilities ──────────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg,#E4E4E7 25%,#F4F4F5 50%,#E4E4E7 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 12px;
+}
+
+/* Light glass card */
+.glass {
+  background: rgba(255,255,255,0.80);
+  border: 1px solid var(--color-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Brand button */
+.btn-brand {
+  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-dark));
+  box-shadow: 0 3px 14px var(--color-brand-glow);
+  color: white;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: opacity .15s, transform .1s;
+}
+.btn-brand:hover  { opacity: .88; }
+.btn-brand:active { transform: scale(.97); }

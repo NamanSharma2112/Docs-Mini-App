@@ -11,6 +11,8 @@ export interface DocumentData {
   filesize: string;
   CloseOrDownload: string;
   createdAt: number;
+  lastViewed?: number;
+  isFavorite?: boolean;
   tagdetails: string;
   tag: {
     isOpen: boolean;
@@ -19,19 +21,21 @@ export interface DocumentData {
   };
   fileName?: string;
   fileType?: string;
-  fileBlob?: Blob; // Storing the actual file Blob
+  fileBlob?: Blob;
 }
 
 interface DocumentContextType {
   documents: DocumentData[];
   addDocument: (doc: Omit<DocumentData, "id" | "createdAt">) => void;
   deleteDocument: (id: string) => void;
+  updateDocument: (id: string, updates: Partial<Omit<DocumentData, "id" | "createdAt">>) => void;
+  toggleFavorite: (id: string) => void;
+  markViewed: (id: string) => void;
   isLoading: boolean;
 }
 
 const DocumentContext = createContext<DocumentContextType | undefined>(undefined);
 
-// Initialize localforage store
 localforage.config({
   name: "DocsMiniApp",
   storeName: "documents_store",
@@ -42,7 +46,6 @@ export function DocumentProvider({ children }: { children: React.ReactNode }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load from IndexedDB on mount
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -60,7 +63,6 @@ export function DocumentProvider({ children }: { children: React.ReactNode }) {
     loadData();
   }, []);
 
-  // Save to IndexedDB whenever documents change
   useEffect(() => {
     if (isLoaded) {
       localforage.setItem("mini-docs-v2", documents).catch(e => {
@@ -74,6 +76,8 @@ export function DocumentProvider({ children }: { children: React.ReactNode }) {
       ...doc,
       id: crypto.randomUUID(),
       createdAt: Date.now(),
+      lastViewed: Date.now(),
+      isFavorite: false,
     };
     setDocuments((prev) => [newDoc, ...prev]);
   };
@@ -82,8 +86,32 @@ export function DocumentProvider({ children }: { children: React.ReactNode }) {
     setDocuments((prev) => prev.filter((doc) => doc.id !== id));
   };
 
+  const updateDocument = (id: string, updates: Partial<Omit<DocumentData, "id" | "createdAt">>) => {
+    setDocuments((prev) =>
+      prev.map((doc) => (doc.id === id ? { ...doc, ...updates } : doc))
+    );
+  };
+
+  const toggleFavorite = (id: string) => {
+    setDocuments((prev) =>
+      prev.map((doc) =>
+        doc.id === id ? { ...doc, isFavorite: !doc.isFavorite } : doc
+      )
+    );
+  };
+
+  const markViewed = (id: string) => {
+    setDocuments((prev) =>
+      prev.map((doc) =>
+        doc.id === id ? { ...doc, lastViewed: Date.now() } : doc
+      )
+    );
+  };
+
   return (
-    <DocumentContext.Provider value={{ documents, addDocument, deleteDocument, isLoading }}>
+    <DocumentContext.Provider
+      value={{ documents, addDocument, deleteDocument, updateDocument, toggleFavorite, markViewed, isLoading }}
+    >
       {children}
     </DocumentContext.Provider>
   );
