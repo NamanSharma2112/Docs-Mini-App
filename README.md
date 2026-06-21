@@ -1,36 +1,131 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Docs — Document Management App
+
+A lightweight, browser-based document management application built with Next.js. Documents and uploaded files are stored entirely on the client side using IndexedDB, requiring no external database or server infrastructure.
+
+## Features
+
+### Dashboard
+The home page provides an overview of your document library. It displays total document count, favorites, recent activity, and a breakdown of documents by tag colour. A list of recently accessed documents is shown for quick navigation.
+
+### Document Board
+A dedicated view for browsing all documents. Supports two layout modes:
+- **Grid View** — Documents displayed as cards in a responsive grid.
+- **Canvas View** — Documents positioned on a dot-grid canvas for spatial organisation.
+
+Includes a real-time search bar and status-based filtering (Important, Draft, Review, Internal).
+
+### Document Detail
+Each document has its own detail page showing full metadata, description, status, and timestamps. Uploaded files can be previewed inline (images and PDFs) and downloaded directly. Documents can be edited, favourited, or deleted from this view.
+
+### Favorites
+A filtered view showing only documents that have been starred. Provides quick access to frequently referenced files.
+
+### Recent Activity
+A timeline view of documents grouped chronologically — Today, Yesterday, This Week, This Month, and Older. Useful for tracking what was recently created or accessed.
+
+### File Uploads
+Documents support real file attachments via drag-and-drop or file picker. Files are stored as binary blobs in the browser's IndexedDB using localforage. The system supports images, PDFs, Word documents, and other common file types. Downloads generate temporary object URLs from the stored blobs.
+
+### Navigation
+- A collapsible sidebar on desktop with route links and document count badges.
+- A floating bottom navigation bar on mobile with animated route indicators.
+
+## Tech Stack
+
+| Layer         | Technology                          |
+|---------------|-------------------------------------|
+| Framework     | Next.js 16 (App Router, Turbopack)  |
+| Language      | TypeScript 5                        |
+| UI Library    | React 19                            |
+| Styling       | Tailwind CSS 4                      |
+| Animations    | Framer Motion                       |
+| Icons         | Lucide React, Huge Icons            |
+| Storage       | IndexedDB via localforage           |
+| Fonts         | Geist Sans, Geist Mono              |
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18 or later
+- npm
+
+### Installation
+
+```bash
+git clone <repository-url>
+cd docs
+npm install
+```
+
+### Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will be available at `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Production Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+docs/
+├── app/
+│   ├── component/
+│   │   ├── BottomNav.tsx          # Mobile bottom navigation bar
+│   │   ├── CanvasBackground.tsx   # Dot grid background for canvas view
+│   │   ├── Card.tsx               # Document card with drag, favourite, download
+│   │   ├── CreateDocModal.tsx     # Modal for creating documents with file upload
+│   │   ├── DocumentContext.tsx    # React context and IndexedDB persistence layer
+│   │   ├── SearchBar.tsx          # Search input and status filter controls
+│   │   ├── Sidebar.tsx            # Collapsible desktop sidebar navigation
+│   │   └── theme-provider.tsx     # Theme context wrapper
+│   ├── documents/
+│   │   ├── page.tsx               # Document board with grid and canvas views
+│   │   └── [id]/
+│   │       └── page.tsx           # Individual document detail page
+│   ├── favorites/
+│   │   └── page.tsx               # Starred documents list
+│   ├── recent/
+│   │   └── page.tsx               # Chronological activity timeline
+│   ├── globals.css                # Design tokens and global styles
+│   ├── layout.tsx                 # Root layout with header, sidebar, bottom nav
+│   └── page.tsx                   # Dashboard with stats and recent documents
+├── public/                        # Static assets
+├── next.config.ts                 # Next.js configuration
+├── tsconfig.json                  # TypeScript configuration
+└── package.json
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Design System
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The application uses a white-tone design with a warm orange accent colour. All colours are defined as CSS custom properties in `globals.css`:
 
-## Deploy on Vercel
+| Token               | Value     | Usage                        |
+|----------------------|-----------|------------------------------|
+| `--color-bg`         | `#F4F4F5` | Page background              |
+| `--color-surface`    | `#FFFFFF` | Card and panel backgrounds   |
+| `--color-brand`      | `#F97316` | Primary accent colour        |
+| `--color-text`       | `#18181B` | Primary text                 |
+| `--color-text-muted` | `#71717A` | Secondary text               |
+| `--color-border`     | `#E4E4E7` | Borders and dividers         |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Data Storage
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+All document data and file attachments are stored in the browser's IndexedDB under the key `mini-docs-v2`. This means:
+
+- Data persists across browser sessions.
+- No server or database setup is required.
+- Data is local to the browser and device being used.
+- Clearing browser data will remove all stored documents.
+
+## License
+
+This project is private and not currently published under an open-source licence.
